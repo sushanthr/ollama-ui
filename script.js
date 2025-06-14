@@ -516,12 +516,62 @@ class OllamaChat {
     async handleImageUpload(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => {
-                const base64 = reader.result.split(',')[1];
-                resolve(base64);
+            reader.onload = async () => {
+                try {
+                    const resizedBase64 = await this.resizeImage(reader.result, 800);
+                    resolve(resizedBase64);
+                } catch (error) {
+                    reject(error);
+                }
             };
             reader.onerror = reject;
             reader.readAsDataURL(file);
+        });
+    }
+
+    async resizeImage(dataUrl, maxDimension) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    // Calculate new dimensions
+                    let { width, height } = img;
+                    
+                    // Only resize if image is larger than maxDimension
+                    if (width <= maxDimension && height <= maxDimension) {
+                        // Image is already small enough, return original base64
+                        resolve(dataUrl.split(',')[1]);
+                        return;
+                    }
+                    
+                    // Calculate scaling factor
+                    const scaleFactor = Math.min(maxDimension / width, maxDimension / height);
+                    const newWidth = Math.floor(width * scaleFactor);
+                    const newHeight = Math.floor(height * scaleFactor);
+                    
+                    // Create canvas and resize
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    
+                    // Use high-quality scaling
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    
+                    // Draw resized image
+                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                    
+                    // Convert to base64 (JPEG with 85% quality for good compression)
+                    const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    resolve(resizedDataUrl.split(',')[1]);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            img.onerror = reject;
+            img.src = dataUrl;
         });
     }
 
