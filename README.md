@@ -3,6 +3,8 @@
 Simple web application for chatting with locally installed Ollama models. 
 Visit https://sushanthr.github.io/ollama-ui/ or deploy this yourself.
 
+You do not have to install another app to talk to your local ollama server.
+
 ## Features
 
 - 🌐 **Web-based Interface**: Clean, modern, and responsive design
