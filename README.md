@@ -1,6 +1,7 @@
 # Ollama Chat UI
 
-A modern, professional web application for chatting with locally installed Ollama models. This application can be deployed on GitHub Pages and connects to your local Ollama server.
+Simple web application for chatting with locally installed Ollama models. 
+Visit https://sushanthr.github.io/ollama-ui/ or deploy this yourself.
 
 ## Features
 
